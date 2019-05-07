@@ -177,46 +177,43 @@ $set and $currentDate
 
 
     db.restaurant.insertMany([
-    {
-        Name: "Morris Park Bake Shop", 
-        Number: "1007", 
-        Street: "Morris Park Ave", 
-        ZIP_Code: "10462", 
-        Borough: "Bronx ", 
-        Cuisine: "Bakery ", 
-        Inspections: [
-            { Inspection_Date: "1393804800000", Grade: "A",  },
-            { Inspection_Date: "1358985600000", Grade: "B",  },
-        ]
-    },
-
-    {
-        Name: "Wendys ", 
-        Number: "1602", 
-        Street: "Shore Parkway", 
-        ZIP_Code: "11214", 
-        Borough: "Brooklyn ", 
-        Cuisine: "Hamburgers ", 
-        Inspections: [
-            { Inspection_Date: "1421193600000", Grade: "A",  },
-            { Inspection_Date: "1409184000000", Grade: "A",  },
-        ]
-    },
-
-    {
-        Name: "Wendys ", 
-        Number: "1661", 
-        Street: "Hylan Blvd", 
-        ZIP_Code: "10305", 
-        Borough: "Staten Island", 
-        Cuisine: "Hamburgers ", 
-        Inspections: [
-            { Inspection_Date: "1417651200000", Grade: "A",  },
-            { Inspection_Date: "1334793600000", Grade: "B",  },
-        ]
-    },
-
-]);
+        {
+            Name: "Morris Park Bake Shop", 
+            Number: "1007", 
+            Street: "Morris Park Ave", 
+            ZIP_Code: "10462", 
+            Borough: "Bronx ", 
+            Cuisine: "Bakery ", 
+            Inspections: [
+                { Inspection_Date: "1393804800000", Grade: "A",  },
+                { Inspection_Date: "1358985600000", Grade: "B",  },
+            ]
+        },
+        {
+            Name: "Wendys ", 
+            Number: "1602", 
+            Street: "Shore Parkway", 
+            ZIP_Code: "11214", 
+            Borough: "Brooklyn ", 
+            Cuisine: "Hamburgers ", 
+            Inspections: [
+                { Inspection_Date: "1421193600000", Grade: "A",  },
+                { Inspection_Date: "1409184000000", Grade: "A",  },
+            ]
+        },
+        {
+            Name: "Wendys ", 
+            Number: "1661", 
+            Street: "Hylan Blvd", 
+            ZIP_Code: "10305", 
+            Borough: "Staten Island", 
+            Cuisine: "Hamburgers ", 
+            Inspections: [
+                { Inspection_Date: "1417651200000", Grade: "A",  },
+                { Inspection_Date: "1334793600000", Grade: "B",  },
+            ]
+        },
+    ]);
 
 
     db.restaurant.find(
@@ -265,11 +262,8 @@ $set and $currentDate
 ### Select by element in list, sort by value inside an list
 
 Query the first and last name of the student that scored the highest in Biology.
-
 **select element in list**
-
 **include space in queey field**
-
 
     db.students.find({"courses.Course Name": "Biology"});
 
