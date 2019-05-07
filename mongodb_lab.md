@@ -1,4 +1,6 @@
-# MongoDB almost NEVER report syntax error / null pointer: all error is LOGICAL
+# MongoDB
+
+**MongoDB almost NEVER report syntax error / null pointer: all error is LOGICAL**
 
 ## Admin
 
@@ -65,6 +67,8 @@ remote login to db
         },
     })
 
+**Projection**
+
     // _id: 0 will hide id.
     db.inventory.find(
         {
@@ -80,6 +84,8 @@ remote login to db
 
     db.inventory.find( { status: { $in: ["A", "D"], }, }, {_id: 1} );
 
+**Inequality Query**
+**lt: less than; gte: greater than or equal to**
 
     db.inventory.find({
         status: "A",
@@ -96,18 +102,21 @@ remote login to db
     })
 
 
-db.inventory.updateOne(
-    { item: "paper" },
-    {
-        $set: {
-            "size.uom": "cm",
-            status: "P",
-        },
-        $currentDate: {
-            lastModified: true,
+    db.inventory.updateOne(
+        { item: "paper" },
+        {
+            $set: {
+                "size.uom": "cm",
+                status: "P",
+            },
+            $currentDate: {
+                lastModified: true,
+            }
         }
-    }
-);
+    );
+
+[link](https://docs.mongodb.com/manual/tutorial/update-documents/#update-a-single-document)
+
 
 db.inventory.find({
     $or: [
