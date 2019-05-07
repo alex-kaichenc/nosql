@@ -262,7 +262,9 @@ $set and $currentDate
 ### Select by element in list, sort by value inside an list
 
 Query the first and last name of the student that scored the highest in Biology.
+
 **select element in list**
+
 **include space in queey field**
 
     db.students.find({"courses.Course Name": "Biology"});
