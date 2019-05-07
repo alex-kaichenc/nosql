@@ -21,7 +21,7 @@ remote login to db
     [ ]
 
 
-## Notes
+## Basics
 
     db.inventory.insertMany([
        // MongoDB adds the _id field with an ObjectId if _id is not present
@@ -85,6 +85,7 @@ remote login to db
     db.inventory.find( { status: { $in: ["A", "D"], }, }, {_id: 1} );
 
 **Inequality Query**
+
 **lt: less than; gte: greater than or equal to**
 
     db.inventory.find({
@@ -102,6 +103,8 @@ remote login to db
     })
 
 
+$set and $currentDate
+
     db.inventory.updateOne(
         { item: "paper" },
         {
@@ -118,55 +121,54 @@ remote login to db
 [link](https://docs.mongodb.com/manual/tutorial/update-documents/#update-a-single-document)
 
 
-db.inventory.find({
-    $or: [
+    db.inventory.find({
+        $or: [
+            {
+                "size.uom": "in",
+                "size.h": { $gte: 8.75, },
+            },
+            {
+                "size.uom": "cm",
+                "size.h": { $gte: 22.225, },
+            },
+        ]
+    });
+
+    db.inventory.updateMany(
+        {$or: [
+            {
+                "size.uom": "in",
+                "size.h": { $gte: 8.75, },
+            },
+            {
+                "size.uom": "cm",
+                "size.h": { $gte: 22.225, },
+            },
+        ]},
         {
-            "size.uom": "in",
-            "size.h": { $gte: 8.75, },
-        },
-        {
-            "size.uom": "cm",
-            "size.h": { $gte: 22.225, },
-        },
-    ]
-});
-db.inventory.updateMany(
-    {$or: [
-        {
-            "size.uom": "in",
-            "size.h": { $gte: 8.75, },
-        },
-        {
-            "size.uom": "cm",
-            "size.h": { $gte: 22.225, },
-        },
-    ]},
-    {
-        $set: { status: "B", },
-    }
-);
+            $set: { status: "B", },
+        }
+    );
 
-db.inventory.deleteMany({ "size.uom" : "in" });
+    db.inventory.deleteMany({ "size.uom" : "in" });
 
 
+**join search**
 
-// join search
+    original_id = ObjectId()
+    db.places.insert({
+        "_id": original_id,
+        "name": "Broadway Center",
+        "url": "bc.example.net"
+    })
 
-original_id = ObjectId()
+    db.people.insert({
+        "name": "Erin",
+        "places_id": original_id,
+        "url":  "bc.example.net/Erin"
+    })
 
-db.places.insert({
-    "_id": original_id,
-    "name": "Broadway Center",
-    "url": "bc.example.net"
-})
-
-db.people.insert({
-    "name": "Erin",
-    "places_id": original_id,
-    "url":  "bc.example.net/Erin"
-})
-
-db.place.find(db.people.find({name: "Erin"}, {_id: 1}));
+    db.place.find(db.people.find({name: "Erin"}, {_id: 1}));
 
 
 
@@ -174,7 +176,7 @@ db.place.find(db.people.find({name: "Erin"}, {_id: 1}));
 // Part 2
 
 
-db.restaurant.insertMany([
+    db.restaurant.insertMany([
     {
         Name: "Morris Park Bake Shop", 
         Number: "1007", 
@@ -217,85 +219,97 @@ db.restaurant.insertMany([
 ]);
 
 
-db.restaurant.find(
-{
-    "Inspections.Grade": "B",
-},
-{
-    _id: 0,
-    Name: 1,
-    Number: 1,
-}
-);
+    db.restaurant.find(
+    {
+        "Inspections.Grade": "B",
+    },
+    {
+        _id: 0,
+        Name: 1,
+        Number: 1,
+    }
+    );
 
-
-// working area
-[
-    { Inspection Date: "1393804800000", Grade: "A",  },
-    { Inspection Date: "1358985600000", Grade: "B",  },
-]
-[
-    { Inspection Date: "1421193600000", Grade: "A",  },
-    { Inspection Date: "1409184000000", Grade: "A",  },
-]
-[
-    { Inspection Date: "1417651200000", Grade: "A",  },
-    { Inspection Date: "1334793600000", Grade: "B",  },
-]
+    // working area
+    [
+        { Inspection Date: "1393804800000", Grade: "A",  },
+        { Inspection Date: "1358985600000", Grade: "B",  },
+    ]
+    [
+        { Inspection Date: "1421193600000", Grade: "A",  },
+        { Inspection Date: "1409184000000", Grade: "A",  },
+    ]
+    [
+        { Inspection Date: "1417651200000", Grade: "A",  },
+        { Inspection Date: "1334793600000", Grade: "B",  },
+    ]
 
 ## Homework 2
-db.students.insertMany([
-    {  "Student ID": 1,  "First Name": "Dave",  "Last Name": "Davis", "courses": [
-        {  "Course ID": 13,  "Course Name": "Biology",  "Grade": 78 },
-        {  "Course ID": 11,  "Course Name": "Calculus",  "Grade": 76 }
-    ]},
-    {  "Student ID": 2,  "First Name": "John",  "Last Name": "Johnson", "courses": [
-        {  "Course ID": 10,  "Course Name": "American History",  "Grade": 90 },
-        {  "Course ID": 12,  "Course Name": "Physics",  "Grade": 95 }
-    ]},
-    {  "Student ID": 3,  "First Name": "Thomas",  "Last Name": "Thompson", "courses": [
-        {  "Course ID": 10,  "Course Name": "American History",  "Grade": 88 },
-        {  "Course ID": 12,  "Course Name": "Physics",  "Grade": 79 },
-        {  "Course ID": 13,  "Course Name": "Biology",  "Grade": 80 }  
-    ]}
-]);
 
-# Sort by value inside an array, and retrieve partially.
-db.students.find({"courses.Course Name": "Biology"});
-db.students.find({"courses.Course Name": "Biology"}, {"First Name": 1, "Last Name": 1, "_id": 0});
-db.students.find(
-    {"courses.Course Name": "Biology"}, 
-    {
-        "First Name": 1, "Last Name": 1, "_id": 0,
-        "courses": { $elemMatch: {"Course Name": "Biology"} }
-    }
-).sort({"courses.Grade": -1}).limit(1);
+    db.students.insertMany([
+        {  "Student ID": 1,  "First Name": "Dave",  "Last Name": "Davis", "courses": [
+            {  "Course ID": 13,  "Course Name": "Biology",  "Grade": 78 },
+            {  "Course ID": 11,  "Course Name": "Calculus",  "Grade": 76 }
+        ]},
+        {  "Student ID": 2,  "First Name": "John",  "Last Name": "Johnson", "courses": [
+            {  "Course ID": 10,  "Course Name": "American History",  "Grade": 90 },
+            {  "Course ID": 12,  "Course Name": "Physics",  "Grade": 95 }
+        ]},
+        {  "Student ID": 3,  "First Name": "Thomas",  "Last Name": "Thompson", "courses": [
+            {  "Course ID": 10,  "Course Name": "American History",  "Grade": 88 },
+            {  "Course ID": 12,  "Course Name": "Physics",  "Grade": 79 },
+            {  "Course ID": 13,  "Course Name": "Biology",  "Grade": 80 }  
+        ]}
+    ]);
+
+### Select by element in list, sort by value inside an list
+
+Query the first and last name of the student that scored the highest in Biology.
+
+**select element in list**
+
+**include space in queey field**
 
 
+    db.students.find({"courses.Course Name": "Biology"});
 
-## If an array has many elements, sort by value of only one element.
+    db.students.find({"courses.Course Name": "Biology"}, 
+        {
+            "First Name": 1, "Last Name": 1, "_id": 0
+        }
+    );
 
-db.test0424.insertMany( [
-   { item: "journal", instock: [ { warehouse: "A", qty: 5 }, { warehouse: "C", qty: 15 } ] },
-   { item: "notebook", instock: [ { warehouse: "C", qty: 5 } ] },
-   { item: "paper", instock: [ { warehouse: "A", qty: 60 }, { warehouse: "B", qty: 15 } ] },
-   { item: "planner", instock: [ { warehouse: "A", qty: 40 }, { warehouse: "B", qty: 5 } ] },
-   { item: "postcard", instock: [ { warehouse: "B", qty: 15 }, { warehouse: "C", qty: 35 } ] }
-]);
+    db.students.find({"courses.Course Name": "Biology"}, 
+        {
+            "First Name": 1, "Last Name": 1, "_id": 0,
+            "courses": { $elemMatch: {"Course Name": "Biology"} }
+        }
+    ).sort({"courses.Grade": -1}).limit(1);
 
-db.test0424.find({"instock.warehouse": "A"});
 
-db.test0424.find({"instock.warehouse": "A"}, 
-    {"instock": { $elemMatch: { warehouse: "A"}}}
-);
-db.test0424.find(
-    {"instock.warehouse": "A"}, 
-    { _id: 0, item: 1,
-        "instock": { $elemMatch: { warehouse: "A"}}
-    }
-).sort(
-    {"instock.qty": -1}
-).limit(1);
+## Draft
+
+    db.test0424.insertMany( [
+       { item: "journal", instock: [ { warehouse: "A", qty: 5 }, { warehouse: "C", qty: 15 } ] },
+       { item: "notebook", instock: [ { warehouse: "C", qty: 5 } ] },
+       { item: "paper", instock: [ { warehouse: "A", qty: 60 }, { warehouse: "B", qty: 15 } ] },
+       { item: "planner", instock: [ { warehouse: "A", qty: 40 }, { warehouse: "B", qty: 5 } ] },
+       { item: "postcard", instock: [ { warehouse: "B", qty: 15 }, { warehouse: "C", qty: 35 } ] }
+    ]);
+
+    db.test0424.find({"instock.warehouse": "A"});
+
+    db.test0424.find({"instock.warehouse": "A"}, 
+        {"instock": { $elemMatch: { warehouse: "A"}}}
+    );
+    db.test0424.find(
+        {"instock.warehouse": "A"}, 
+        { _id: 0, item: 1,
+            "instock": { $elemMatch: { warehouse: "A"}}
+        }
+    ).sort(
+        {"instock.qty": -1}
+    ).limit(1);
 
 
 
