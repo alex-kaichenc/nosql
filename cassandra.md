@@ -32,7 +32,7 @@
     DELETE FROM users WHERE lastname = 'Doe';
 
 
-## Lab
+## Lab: CRUD
 
     CREATE KEYSPACE IF NOT EXISTS lab WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3 };
     USE lab;
@@ -71,7 +71,7 @@
         PRIMARY KEY (username, follower)
     );
 
-// 0
+// 0 **Insert**
 
     INSERT INTO users (username, password) VALUES ('chenwang', '1');
     INSERT INTO users (username, password) VALUES ('yangyang', '2');
@@ -92,32 +92,32 @@
     INSERT INTO timeline (username, time, tweet_id) VALUES ('chenwang', 2ac0b760-6241-11e9-824a-c94d650a52b9, 5ecbaa2a-7672-4c45-b031-942c410e60cd);
     INSERT INTO timeline (username, time, tweet_id) VALUES ('yangyang', 2ac0b760-6241-11e9-824a-c94d650a52b9, 5ecbaa2a-7672-4c45-b031-942c410e60cd);
 
-// 4
+// 4 **Limit**
 
     SELECT time, tweet_id FROM userline WHERE username='chenwang' LIMIT 10;
 
 // 5
 
-    SELECT * FROM tweets WHERE tweet_id= 5ecbaa2a-7672-4c45-b031-942c410e60cd;
+    SELECT * FROM tweets WHERE tweet_id = 5ecbaa2a-7672-4c45-b031-942c410e60cd;
 
-// 6
+// 6 **UPDATE SET**
 
     UPDATE users SET password = '123' WHERE username = 'chenwang';
 
-// 7
+// 7 **DELETE WHERE**
 
     SELECT friend FROM friends WHERE username = 'yangyang';
     DELETE FROM friends WHERE username = 'yangyang' AND friend= 'chenwang';
     SELECT follower FROM followers WHERE username = 'chenwang';
     DELETE FROM followers WHERE username = 'chenwang' AND follower = 'yangyang';
 
-// 8
+// 8 **ALTER TABLE ADD**
 
     ALTER TABLE users ADD email set<text>;
     UPDATE users SET email = {'cwang@andrew.cmu.edu, chenwang@cmu.edu'} WHERE username = 'chenwang';
 
 
-**// Insert missing value to clustering column: forbidden.**
+// **Insert missing value to clustering column: forbidden.**
 
     CREATE TABLE users2 (
         username text,
@@ -130,7 +130,7 @@
 
     SELECT * from users2 WHERE username in ('c', 'y') order by password desc;
 
-## hw2
+## hw2: denormalization
 
     CREATE TABLE students (
         StudentID text PRIMARY KEY,
@@ -152,9 +152,7 @@
 
 **Denormalization: Set**
 
-Supported Query: returns the student ID of all students who took the American History course.
-
-**Create set and update set**
+Query the student ID of all students who took the American History course.
 
     CREATE TABLE gradesByCourse (
         CourseName  text PRIMARY KEY,
@@ -173,6 +171,7 @@ Supported Query: returns the student ID of all students who took the American Hi
     UPDATE gradesByCourse SET students = students + {'s3'} WHERE CourseName = 'Physics';
     UPDATE gradesByCourse SET students = students + {'s3'} WHERE CourseName = 'Biology';
 
+
 **Denormalization: wide column**
 
 _Wide column family models a list, with each column being one element in that list._
@@ -184,7 +183,7 @@ _Wide column family models a list, with each column being one element in that li
     ALTER TABLE gradesByCourse ADD s2 int;
     UPDATE gradesByCourse SET s2 = 90 WHERE CourseName = 'AmericanHistory';
     UPDATE gradesByCourse SET s2 = 95 WHERE CourseName = 'Physics';
-    
+
     ALTER TABLE gradesByCourse ADD s3 int;
     UPDATE gradesByCourse SET s3 = 88 WHERE CourseName = 'AmericanHistory';
     UPDATE gradesByCourse SET s3 = 79 WHERE CourseName = 'Physics';
