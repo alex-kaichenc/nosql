@@ -1,5 +1,7 @@
 # Graph Database
 
+Review: 190626
+
 + In Neo4j querying non-existent property return **null**.
 + **Case Sensitive**
 
